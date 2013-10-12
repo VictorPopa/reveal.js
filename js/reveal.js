@@ -270,7 +270,7 @@ var Reveal = (function(){
 	 * to the current URL deeplink if there is one.
 	 */
 	function start() {
-
+		alert ("OK");
 		var pubnub = PUBNUB.init({
 			publish_key : 'demo',
 			subscribe_key : 'demo'
