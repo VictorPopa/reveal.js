@@ -25,7 +25,7 @@
 			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
 		</script>
         
-        <script src="http://cdn.pubnub.com/pubnub-3.4.min.js"></script>
+        <script src=http://cdn.pubnub.com/pubnub-3.4.min.js></script>
         <script src="js/services.js"></script>
         
 		<!--[if lt IE 9]>
@@ -354,7 +354,8 @@ function linkify( selector ) {
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.min.js"></script>
+		<!--<script src="js/reveal.min.js"></script>-->
+		<script src="js/reveal.js"></script>
 		<script src=http://cdn.pubnub.com/pubnub-3.5.1.min.js ></script>
 		<script>
 
@@ -379,52 +380,6 @@ function linkify( selector ) {
 					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 				]
 			});
-
-			(function(){
-				//init
-				var pubnub = PUBNUB.init({
-					publish_key : 'demo',
-					subscribe_key : 'demo'
-				})
-
-				//get current url
-				var path = window.location.href;
-
-				//get the last part of current url
-				var lastPart = path.split("/").pop();
-
-				//slide number is the second last part of current url. If you are presenter, you will publish slide number. 
-				if (lastPart == "presenter")
-				  {
-				  	var subpath = window.location.href;
-				    var lastsubPart = subpath.split('/').slice(-2)[0];
-					//alert (lastsubPart);
-					pubnub.publish({
-						channel : "reveal",
-						message : lastsubPart
-					})
-				  }
-				else
-				//If you are audience viewer, you will receive slide number from presenter and your site will go to the page of this slide.
-				  {
-	  				pubnub.subscribe({
-						backfill : true,
-						restore  : true,
-						channel  : 'reveal',
-						callback :  function(message){
-							var url = window.location.href;    
-							url += '#/' + message;
-							window.location.href = url;
-						},
-						connect : function() {
-							psudo_post_url( "http://lab.hakim.se/reveal-js", {
-								"user_id" : 123456789,
-								"channel" : "reveal"
-							});
-						}
-				  })
-				}
-			})();
 		</script>
 	</body>
 </html>

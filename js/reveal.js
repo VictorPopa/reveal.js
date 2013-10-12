@@ -271,6 +271,21 @@ var Reveal = (function(){
 	 */
 	function start() {
 
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath != "presenter")
+		  {
+			 pubnub.subscribe({
+				    backfill : true,
+					channel  : 'reveal',
+					message  : function(m){ slide(m);}
+			 })
+		  }
+
 		// Make sure we've got all the DOM elements we need
 		setupDOM();
 
@@ -1399,7 +1414,6 @@ var Reveal = (function(){
 	 * @param {int} o Optional origin for use in multimaster environments
 	 */
 	function slide( h, v, f, o ) {
-
 		// Remember where we were at before
 		previousSlide = currentSlide;
 
@@ -1958,19 +1972,16 @@ var Reveal = (function(){
 	 * Reads the current URL (hash) and navigates accordingly.
 	 */
 	function readURL() {
-
 		var hash = window.location.hash;
-
+		
 		// Attempt to parse the hash as either an index or name
 		var bits = hash.slice( 2 ).split( '/' ),
 			name = hash.replace( /#|\//gi, '' );
-
 		// If the first bit is invalid and there is a name we can
 		// assume that this is a named link
 		if( isNaN( parseInt( bits[0], 10 ) ) && name.length ) {
 			// Find the slide with the specified name
 			var element = document.querySelector( '#' + name );
-
 			if( element ) {
 				// Find the position of the named slide and navigate to it
 				var indices = Reveal.getIndices( element );
@@ -2023,7 +2034,6 @@ var Reveal = (function(){
 					if( indexh > 0 || indexv > 0 ) url += indexh;
 					if( indexv > 0 ) url += '/' + indexv;
 				}
-
 				window.location.hash = url;
 			}
 		}
@@ -2168,51 +2178,127 @@ var Reveal = (function(){
 	}
 
 	function navigateLeft() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Reverse for RTL
-		if( config.rtl ) {
-			if( ( isOverview() || nextFragment() === false ) && availableRoutes().left ) {
-				slide( indexh + 1 );
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+			// Reverse for RTL
+			if( config.rtl ) {
+				if( ( isOverview() || nextFragment() === false ) && availableRoutes().left ) {
+					slide( indexh + 1 );
+				}
 			}
-		}
-		// Normal navigation
-		else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
-			slide( indexh - 1 );
-		}
+			// Normal navigation
+			else if( ( isOverview() || previousFragment() === false ) && availableRoutes().left ) {
+				slide( indexh - 1 );
+			}
 
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 	}
 
 	function navigateRight() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Reverse for RTL
-		if( config.rtl ) {
-			if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
-				slide( indexh - 1 );
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+
+			// Reverse for RTL
+			if( config.rtl ) {
+				if( ( isOverview() || previousFragment() === false ) && availableRoutes().right ) {
+					slide( indexh - 1 );
+				}
 			}
-		}
-		// Normal navigation
-		else if( ( isOverview() || nextFragment() === false ) && availableRoutes().right ) {
-			slide( indexh + 1 );
-		}
+			// Normal navigation
+			else if( ( isOverview() || nextFragment() === false ) && availableRoutes().right ) {
+				slide( indexh + 1 );
+			}
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 
 	}
 
 	function navigateUp() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Prioritize hiding fragments
-		if( ( isOverview() || previousFragment() === false ) && availableRoutes().up ) {
-			slide( indexh, indexv - 1 );
-		}
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+			// Prioritize hiding fragments
+			if( ( isOverview() || previousFragment() === false ) && availableRoutes().up ) {
+				slide( indexh, indexv - 1 );
+			}
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 
 	}
 
 	function navigateDown() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Prioritize revealing fragments
-		if( ( isOverview() || nextFragment() === false ) && availableRoutes().down ) {
-			slide( indexh, indexv + 1 );
-		}
-
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+			// Prioritize revealing fragments
+			if( ( isOverview() || nextFragment() === false ) && availableRoutes().down ) {
+				slide( indexh, indexv + 1 );
+			}
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 	}
 
 	/**
@@ -2222,40 +2308,77 @@ var Reveal = (function(){
 	 * 3) Previous horizontal slide
 	 */
 	function navigatePrev() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Prioritize revealing fragments
-		if( previousFragment() === false ) {
-			if( availableRoutes().up ) {
-				navigateUp();
-			}
-			else {
-				// Fetch the previous horizontal slide, if there is one
-				var previousSlide = document.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+			// Prioritize revealing fragments
+			if( previousFragment() === false ) {
+				if( availableRoutes().up ) {
+					navigateUp();
+				}
+				else {
+					// Fetch the previous horizontal slide, if there is one
+					var previousSlide = document.querySelector( HORIZONTAL_SLIDES_SELECTOR + '.past:nth-child(' + indexh + ')' );
 
-				if( previousSlide ) {
-					var v = ( previousSlide.querySelectorAll( 'section' ).length - 1 ) || undefined;
-					var h = indexh - 1;
-					slide( h, v );
+					if( previousSlide ) {
+						var v = ( previousSlide.querySelectorAll( 'section' ).length - 1 ) || undefined;
+						var h = indexh - 1;
+						slide( h, v );
+					}
 				}
 			}
-		}
-
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 	}
 
 	/**
 	 * Same as #navigatePrev() but navigates forwards.
 	 */
 	function navigateNext() {
+		//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		// Prioritize revealing fragments
-		if( nextFragment() === false ) {
-			availableRoutes().down ? navigateDown() : navigateRight();
-		}
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
+			// Prioritize revealing fragments
+			if( nextFragment() === false ) {
+				availableRoutes().down ? navigateDown() : navigateRight();
+			}
 
-		// If auto-sliding is enabled we need to cue up
-		// another timeout
-		cueAutoSlide();
+			// If auto-sliding is enabled we need to cue up
+			// another timeout
+			cueAutoSlide();
 
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    } 
 	}
 
 
@@ -2270,7 +2393,6 @@ var Reveal = (function(){
 	 * @param {Object} event
 	 */
 	function onDocumentKeyDown( event ) {
-
 		// Check if there's a focused element that could be using
 		// the keyboard
 		var activeElement = document.activeElement;
@@ -2397,7 +2519,6 @@ var Reveal = (function(){
 	 * Handler for the 'touchmove' event.
 	 */
 	function onTouchMove( event ) {
-
 		// Each touch should only trigger one action
 		if( !touch.captured ) {
 			var currentX = event.touches[0].clientX;
@@ -2552,14 +2673,34 @@ var Reveal = (function(){
 	 * ( clickX / presentationWidth ) * numberOfSlides
 	 */
 	function onProgressClicked( event ) {
+			//pubnub init
+		var pubnub = PUBNUB.init({
+			publish_key : 'demo',
+			subscribe_key : 'demo'
+		})
 
-		event.preventDefault();
+		var str = window.location.href;
+		var subpath=str.substring(str.lastIndexOf("?")+1,str.lastIndexOf("#"));
+		if (subpath == "presenter")
+		  {
 
-		var slidesTotal = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
-		var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
+			event.preventDefault();
 
-		slide( slideIndex );
+			var slidesTotal = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR ) ).length;
+			var slideIndex = Math.floor( ( event.clientX / dom.wrapper.offsetWidth ) * slidesTotal );
 
+			slide( slideIndex );
+
+			var hash = window.location.hash;
+			
+			// Attempt to parse the hash as either an index or name
+			var bits = hash.slice( 2 ).split( '/' ),
+				name = hash.replace( /#|\//gi, '' );
+			pubnub.publish({
+				channel : "reveal",
+				message : bits
+			})
+	    }
 	}
 
 	/**
@@ -2594,7 +2735,6 @@ var Reveal = (function(){
 	 * Invoked when a slide is and we're in the overview.
 	 */
 	function onOverviewSlideClicked( event ) {
-
 		// TODO There's a bug here where the event listeners are not
 		// removed after deactivating the overview.
 		if( eventsAreBound && isOverview() ) {
@@ -2627,7 +2767,6 @@ var Reveal = (function(){
 	 * iframe overlay.
 	 */
 	function onPreviewLinkClicked( event ) {
-
 		var url = event.target.getAttribute( 'href' );
 		if( url ) {
 			openPreview( url );
