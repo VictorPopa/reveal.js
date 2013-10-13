@@ -1,4 +1,4 @@
-# reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
+# Reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
 
@@ -65,77 +65,166 @@ PUBNUB.subscribe({
 
 We can create a remote control interface or a SYNC ability to keep everyone on the same Slide Number.
 In other words, we can add PubNub by making the slideshow aspect real-time by making each slide number sync between clients.
+
 Every time the presenter changes the slide number in presentation mode, all clients are on the same slide number. 
 They all follow the presenter.
 
 
-### Dependencies
+#### PubNub CDN JavaScript SDK
 
-Reveal.js doesn't _rely_ on any third party scripts to work but a few optional libraries are included by default. These libraries are loaded as dependencies in the order they appear, for example:
+You may access the latest PubNub JavaScript SDK on The PubNub Network CDN.
 
-```javascript
-Reveal.initialize({
-	dependencies: [
-		// Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
-		{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-
-		// Interpret Markdown in <section> elements
-		{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-		{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-
-		// Syntax highlight for <code> elements
-		{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-
-		// Zoom in and out with Alt+click
-		{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-
-		// Speaker notes
-		{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
-
-		// Remote control your reveal.js presentation using a touch device
-		{ src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
-
-		// MathJax
-		{ src: 'plugin/math/math.js', async: true }
-	]
-});
+```html
+<script src=http://cdn.pubnub.com/pubnub-3.5.1.min.js ></script>
 ```
 
-You can add your own extensions using the same syntax. The following properties are available for each dependency object:
-- **src**: Path to the script to load
-- **async**: [optional] Flags if the script should load after reveal.js has started, defaults to false
-- **callback**: [optional] Function to execute when the script has loaded
-- **condition**: [optional] Function which must return true for the script to be loaded
+#### Find out the slide show part in the reveal.js
 
-
-### Presentation Size
-
-All presentations have a normal size, that is the resolution at which they are authored. The framework will automatically scale presentations uniformly based on this size to ensure that everything fits on any given display or viewport.
-
-See below for a list of configuration options related to sizing, including default values:
+In the reveal.js, all the slides are showed by slide() function.
 
 ```javascript
-Reveal.initialize({
+function slide( h, v, f, o ) {
+	// Remember where we were at before
+	previousSlide = currentSlide;
 
-	...
+	// Query all horizontal slides in the deck
+	var horizontalSlides = document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR );
 
-	// The "normal" size of the presentation, aspect ratio will be preserved
-	// when the presentation is scaled to fit different resolutions. Can be
-	// specified using percentage units.
-	width: 960,
-	height: 700,
+	// If no vertical index is specified and the upcoming slide is a
+	// stack, resume at its previous vertical index
+	if( v === undefined ) {
+		v = getPreviousVerticalIndex( horizontalSlides[ h ] );
+	}
 
-	// Factor of the display size that should remain empty around the content
-	margin: 0.1,
+	// If we were on a vertical stack, remember what vertical index
+	// it was on so we can resume at the same position when returning
+	if( previousSlide && previousSlide.parentNode && previousSlide.parentNode.classList.contains( 'stack' ) ) {
+		setPreviousVerticalIndex( previousSlide.parentNode, indexv );
+	}
 
-	// Bounds for smallest/largest possible scale to apply to content
-	minScale: 0.2,
-	maxScale: 1.0
+	// Remember the state before this slide
+	var stateBefore = state.concat();
 
-});
+	// Reset the state array
+	state.length = 0;
+
+	var indexhBefore = indexh || 0,
+		indexvBefore = indexv || 0;
+
+	// Activate and transition to the new slide
+	indexh = updateSlides( HORIZONTAL_SLIDES_SELECTOR, h === undefined ? indexh : h );
+	indexv = updateSlides( VERTICAL_SLIDES_SELECTOR, v === undefined ? indexv : v );
+
+	// Update the visibility of slides now that the indices have changed
+	updateSlidesVisibility();
+
+	layout();
+
+	// Apply the new state
+	stateLoop: for( var i = 0, len = state.length; i < len; i++ ) {
+		// Check if this state existed on the previous slide. If it
+		// did, we will avoid adding it repeatedly
+		for( var j = 0; j < stateBefore.length; j++ ) {
+			if( stateBefore[j] === state[i] ) {
+				stateBefore.splice( j, 1 );
+				continue stateLoop;
+			}
+		}
+
+		document.documentElement.classList.add( state[i] );
+
+		// Dispatch custom event matching the state's name
+		dispatchEvent( state[i] );
+	}
+
+	// Clean up the remains of the previous state
+	while( stateBefore.length ) {
+		document.documentElement.classList.remove( stateBefore.pop() );
+	}
+
+	// If the overview is active, re-activate it to update positions
+	if( isOverview() ) {
+		activateOverview();
+	}
+
+	// Find the current horizontal slide and any possible vertical slides
+	// within it
+	var currentHorizontalSlide = horizontalSlides[ indexh ],
+		currentVerticalSlides = currentHorizontalSlide.querySelectorAll( 'section' );
+
+	// Store references to the previous and current slides
+	currentSlide = currentVerticalSlides[ indexv ] || currentHorizontalSlide;
+
+
+	// Show fragment, if specified
+	if( typeof f !== 'undefined' ) {
+		var fragments = sortFragments( currentSlide.querySelectorAll( '.fragment' ) );
+
+		toArray( fragments ).forEach( function( fragment, indexf ) {
+			if( indexf < f ) {
+				fragment.classList.add( 'visible' );
+			}
+			else {
+				fragment.classList.remove( 'visible' );
+			}
+		} );
+	}
+
+	// Dispatch an event if the slide changed
+	var slideChanged = ( indexh !== indexhBefore || indexv !== indexvBefore );
+	if( slideChanged ) {
+		dispatchEvent( 'slidechanged', {
+			'indexh': indexh,
+			'indexv': indexv,
+			'previousSlide': previousSlide,
+			'currentSlide': currentSlide,
+			'origin': o
+		} );
+	}
+	else {
+		// Ensure that the previous slide is never the same as the current
+		previousSlide = null;
+	}
+
+	// Solves an edge case where the previous slide maintains the
+	// 'present' class when navigating between adjacent vertical
+	// stacks
+	if( previousSlide ) {
+		previousSlide.classList.remove( 'present' );
+
+		// Reset all slides upon navigate to home
+		// Issue: #285
+		if ( document.querySelector( HOME_SLIDE_SELECTOR ).classList.contains( 'present' ) ) {
+			// Launch async task
+			setTimeout( function () {
+				var slides = toArray( document.querySelectorAll( HORIZONTAL_SLIDES_SELECTOR + '.stack') ), i;
+				for( i in slides ) {
+					if( slides[i] ) {
+						// Reset stack
+						setPreviousVerticalIndex( slides[i], 0 );
+					}
+				}
+			}, 0 );
+		}
+	}
+
+	// Handle embedded content
+	if( slideChanged ) {
+		stopEmbeddedContent( previousSlide );
+		startEmbeddedContent( currentSlide );
+	}
+
+	updateControls();
+	updateProgress();
+	updateBackground();
+
+	// Update the URL hash
+	writeURL();
+
+}
 ```
 
-### Keyboard Bindings
+#### Find out the event part in the reveal.js
 
 If you're unhappy with any of the default keyboard bindings you can override them using the ```keyboard``` config option:
 
