@@ -46,6 +46,21 @@ Execute a Subscribe API call to begin listening for messages, automatically keep
 
 Publish a message to send data simultaneously to all subscribed clients. Publish API Call needs to be issued only once. 
 
+```javascript
+// send events
+PUBNUB.publish({
+  channel: "hello_world",
+  message: "data"
+});
+
+
+// listen to events
+PUBNUB.subscribe({
+  channel: "hello_world",
+  callback: alert
+}); 
+```
+
 ### How Can I Use PubNub with Reveal.Js?
 
 We can create a remote control interface or a SYNC ability to keep everyone on the same Slide Number.
