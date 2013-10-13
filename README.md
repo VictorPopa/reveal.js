@@ -34,96 +34,24 @@ Send messages from any device and receive messages on any device. From any devic
 
 PubNub provides client libraries for all major programming languages and mobile platforms to make web data push development as easy as pie. PubNub is tuned for gaming performance and will shine with any application. Build web-scale Data Push communication applications such as analytics, games, messaging, tweets and more! 
 
-### Markdown
+### How Hard is PubNub to Use?
 
-It's possible to write your slides using Markdown. To enable Markdown, add the ```data-markdown``` attribute to your ```<section>``` elements and wrap the contents in a ```<script type="text/template">``` like the example below.
+#### Universal Function Calls
 
-This is based on [data-markdown](https://gist.github.com/1343518) from [Paul Irish](https://github.com/paulirish) modified to use [marked](https://github.com/chjj/marked) to support [Github Flavoured Markdown](https://help.github.com/articles/github-flavored-markdown). Sensitive to indentation (avoid mixing tabs and spaces) and line breaks (avoid consecutive breaks).
+The PubNub API couldn't be simpler. There are two methods to know for each programming interface: 
 
-```html
-<section data-markdown>
-	<script type="text/template">
-		## Page title
+#### Publish & Subscribe
 
-		A paragraph with some text and a [link](http://hakim.se).
-	</script>
-</section>
-```
+Execute a Subscribe API call to begin listening for messages, automatically keeping the connection open until the application is closed. Subscribe API Call needs to be issued once per client.
 
-#### External Markdown
+Publish a message to send data simultaneously to all subscribed clients. Publish API Call needs to be issued only once. 
 
-You can write your content as a separate file and have reveal.js load it at runtime. Note the separator arguments which determine how slides are delimited in the external file. The ```data-charset``` attribute is optional and specifies which charset to use when loading the external file.
+### How Can I Use PubNub with Reveal.Js?
 
-```html
-<section data-markdown="example.md" data-separator="^\n\n\n" data-vertical="^\n\n" data-notes="^Note:" data-charset="iso-8859-15"></section>
-```
-
-### Configuration
-
-At the end of your page you need to initialize reveal by running the following code. Note that all config values are optional and will default as specified below.
-
-```javascript
-Reveal.initialize({
-
-	// Display controls in the bottom right corner
-	controls: true,
-
-	// Display a presentation progress bar
-	progress: true,
-
-	// Push each slide change to the browser history
-	history: false,
-
-	// Enable keyboard shortcuts for navigation
-	keyboard: true,
-
-	// Enable touch events for navigation
-	touch: true,
-
-	// Enable the slide overview mode
-	overview: true,
-
-	// Vertical centering of slides
-	center: true,
-
-	// Loop the presentation
-	loop: false,
-
-	// Change the presentation direction to be RTL
-	rtl: false,
-
-	// Number of milliseconds between automatically proceeding to the
-	// next slide, disabled when set to 0, this value can be overwritten
-	// by using a data-autoslide attribute on your slides
-	autoSlide: 0,
-
-	// Enable slide navigation via mouse wheel
-	mouseWheel: false,
-
-	// Transition style
-	transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
-
-	// Transition speed
-	transitionSpeed: 'default', // default/fast/slow
-
-	// Transition style for full page backgrounds
-	backgroundTransition: 'default' // default/linear/none
-
-});
-```
-
-Note that the new default vertical centering option will break compatibility with slides that were using transitions with backgrounds (`cube` and `page`). To restore the previous behavior, set `center` to `false`.
-
-
-The configuration can be updated after initialization using the ```configure``` method:
-
-```javascript
-// Turn autoSlide off
-Reveal.configure({ autoSlide: 0 });
-
-// Start auto-sliding every 5s
-Reveal.configure({ autoSlide: 5000 });
-```
+We can create a remote control interface or a SYNC ability to keep everyone on the same Slide Number.
+In other words, we can add PubNub by making the slideshow aspect real-time by making each slide number sync between clients.
+Every time the presenter changes the slide number in presentation mode, all clients are on the same slide number. 
+They all follow the presenter.
 
 
 ### Dependencies
