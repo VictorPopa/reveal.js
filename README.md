@@ -244,8 +244,10 @@ function onNavigateNextClicked( event ) {...}
 ### Presenter only Publish on Slide Change, Audience Viewer Subscribe only
 
 Only presenter can publish on slide changes by sending message with slide number.
+
 Then audience viewers will receive this slide number and change their slides.
 We can distinguish presenter and audience viewer by description of URL.
+
 The presenter will have following URL.
 
 ```html
@@ -262,6 +264,7 @@ And audience viewers have origin URL.
 
 We can publish slide number whenever the presenter changes it.
 In other words, pubnub will publish slide number when the slides are changed by presenter.
+
 Here are some example.
 
 ```javascript
