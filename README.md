@@ -1,9 +1,12 @@
-# Reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
+# Reveal.JS + PubNub
+
+> The PubNub Real-time Network - [www.pubnub.com](http://www.pubnub.com/)
+
+## Reveal.js + PubNub Sync [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
 
 reveal.js comes with a broad range of features including [nested slides](https://github.com/hakimel/reveal.js#markup), [markdown contents](https://github.com/hakimel/reveal.js#markdown), [PDF export](https://github.com/hakimel/reveal.js#pdf-export), [speaker notes](https://github.com/hakimel/reveal.js#speaker-notes) and a [JavaScript API](https://github.com/hakimel/reveal.js#api). It's best viewed in a browser with support for CSS 3D transforms but [fallbacks](https://github.com/hakimel/reveal.js/wiki/Browser-Support) are available to make sure your presentation can still be viewed elsewhere.
-
 
 #### More reading:
 - [Installation](#installation): Step-by-step instructions for getting reveal.js running on your computer.
@@ -15,17 +18,12 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 
 Presentations are written using HTML or markdown but there's also an online editor for those of you who prefer a graphical interface. Give it a try at [http://slid.es](http://slid.es).
 
-
-## Reveal.JS + PUBNUB
-
 ### What is PUBNUB?
 
- PubNub is a new kind of instantaneous Web Data Push Service for Mobile Phones, TVs, HTML5 Web Browsers, Tablets and Game Consoles. We believe in unified broadcasting and mass communication. Develop once and push everywhere. PubNub is a Global Web Data Push Service for Broadcasting Bidirectional Messages to Mobile, TV, Web, Tablet and Console simultaneously.
+The PubNub Real-Time Network takes care of the cloud infrastructure, connections and key building blocks for real-time interactivity, so you can focus on creating killer apps
 
-PubNub is considered a Web Push Engine able to push (or stream) any textual data in real-time data push to any types of clients across the Internet. PubNub solves all the complexity of pushing data in a scalable, secure, efficient, reliable and portable way. On the client side, APIs are provided so that it is very easy to build Bidirectional Data Push Apps (transforming your existing client or creating a new one from scratch). A powerful HTML5 library makes it possible to push data updates to Mobile Phones, Tablets and Web Pages in real-time data push through a zero-install client.
-
+sPubNub is considered a Web Push Engine able to push (or stream) any textual data in real-time data push to any types of clients across the Internet. PubNub solves all the complexity of pushing data in a scalable, secure, efficient, reliable and portable way. On the client side, APIs are provided so that it is very easy to build Bidirectional Data Push Apps (transforming your existing client or creating a new one from scratch). A powerful HTML5 library makes it possible to push data updates to Mobile Phones, Tablets and Web Pages in real-time data push through a zero-install client.
 PubNub is also referred to as a web data push service with Reverse AJAX capabilities which allows you to send data to clients with BOSH Comet technology. This removes the need to constantly poll for new updates in the app. Other associated terms are: browser push, websockets, web data push, data push, real-time push and push notifications.
-
 Objective-C, Java, PHP, JavaScript, Python, Ruby, Erlang, C#, .NET and more are provided for mobile phones and tablets such as Android and iPhone for Web Data Push. Every web browser is supported for web browser push.
 
 Basically, PubNub can be considered a publish/subscribe middleware based on the standard HTTP 1.1 protocol.
